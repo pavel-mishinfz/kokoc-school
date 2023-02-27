@@ -43,3 +43,5 @@ CREATE INDEX task_dt_deadline_idx ON tasks(dt_deadline);
 CREATE INDEX user_dt_registration_idx ON users(dt_registration);
 CREATE INDEX user_password_idx ON users(password);
 CREATE INDEX user_name ON users(name);
+
+CREATE FULLTEXT INDEX task_name_search ON tasks(name);
