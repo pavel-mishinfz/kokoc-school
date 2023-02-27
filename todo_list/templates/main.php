@@ -48,7 +48,7 @@
                 <span class="checkbox__text">Показывать выполненные</span>
             </label>
         </div>
-        <?php if(isset($_GET['q']) && count($tasks_list_for_project)):?>
+        <?php if(count($tasks_list_for_project)):?>
             <table class="tasks">
                 <?php foreach ($tasks_list_for_project as $task) : ?>
                     <?php if ($task["status_ext"] == true && $show_complete_tasks == 0) : continue; ?>
