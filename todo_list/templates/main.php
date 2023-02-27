@@ -24,9 +24,9 @@
     <main class="content__main">
         <h2 class="content__main-heading">Список задач</h2>
 
-        <form class="search-form" action="index.php" method="post" autocomplete="off">
-            <input class="search-form__input" type="text" name="" value="" placeholder="Поиск по задачам">
-
+        <form class="search-form" action="index.php?q" method="get" autocomplete="off">
+            <input class="search-form__input" type="text" name="q" value="" placeholder="Поиск по задачам">
+            
             <input class="search-form__submit" type="submit" name="" value="Искать">
         </form>
 
@@ -48,38 +48,41 @@
                 <span class="checkbox__text">Показывать выполненные</span>
             </label>
         </div>
-
-        <table class="tasks">
-            <?php foreach ($tasks_list_for_project as $task) : ?>
-                <?php if ($task["status_ext"] == true && $show_complete_tasks == 0) : continue; ?>
-                <?php elseif ($task["status_ext"] == true) : ?>
-                    <tr class="tasks__item task task--completed">
-                <?php else : ?>
-                    <?php if(funTaskDeadline($task)):?>
-                        <tr class="tasks__item task task--important">
-                    <?php else: ?>
-                        <tr class="tasks__item task">
-                    <?php endif; ?>
-                <?php endif; ?>
-                    <td class="task__select">
-                        <label class="checkbox task__checkbox">
-                            <?php if ($task["status_ext"] == true) : ?>
-                                <input class="checkbox__input visually-hidden" type="checkbox" checked>
-                            <?php else : ?>
-                                <input class="checkbox__input visually-hidden" type="checkbox">
-                            <?php endif; ?>
-                            <span class="checkbox__text"><?= esc($task["name"]); ?></span>
-                        </label>
-                    </td>
-                    <td class="task__file"><a href="http://localhost/php_p.mishin/lesson_07/uploads/<?=esc($task['file_path']);?>"><?=esc($task['file_path']);?></a></td>
-                    <?php if (esc($task["dt_deadline"]) == null) : ?>
-                        <td class="task__date">Нет</td>
+        <?php if(isset($_GET['q']) && count($tasks_list_for_project)):?>
+            <table class="tasks">
+                <?php foreach ($tasks_list_for_project as $task) : ?>
+                    <?php if ($task["status_ext"] == true && $show_complete_tasks == 0) : continue; ?>
+                    <?php elseif ($task["status_ext"] == true) : ?>
+                        <tr class="tasks__item task task--completed">
                     <?php else : ?>
-                        <td class="task__date"><?= date("d.m.y", strtotime(esc($task["dt_deadline"])))  ?></td>
+                        <?php if(funTaskDeadline($task)):?>
+                            <tr class="tasks__item task task--important">
+                        <?php else: ?>
+                            <tr class="tasks__item task">
+                        <?php endif; ?>
                     <?php endif; ?>
-                    <td class="task__controls"></td>
-                    </tr>
-                <?php endforeach; ?>
-        </table>
+                        <td class="task__select">
+                            <label class="checkbox task__checkbox">
+                                <?php if ($task["status_ext"] == true) : ?>
+                                    <input class="checkbox__input visually-hidden" type="checkbox" checked>
+                                <?php else : ?>
+                                    <input class="checkbox__input visually-hidden" type="checkbox">
+                                <?php endif; ?>
+                                <span class="checkbox__text"><?= esc($task["name"]); ?></span>
+                            </label>
+                        </td>
+                        <td class="task__file"><a href="http://localhost/php_p.mishin/lesson_07/uploads/<?=esc($task['file_path']);?>"><?=esc($task['file_path']);?></a></td>
+                        <?php if (esc($task["dt_deadline"]) == null) : ?>
+                            <td class="task__date">Нет</td>
+                        <?php else : ?>
+                            <td class="task__date"><?= date("d.m.y", strtotime(esc($task["dt_deadline"])))  ?></td>
+                        <?php endif; ?>
+                        <td class="task__controls"></td>
+                        </tr>
+                    <?php endforeach; ?>
+            </table>
+        <?php else: ?>
+            <?='Ничего не найдено по вашему запросу';?>   
+        <?php endif;?>
     </main>
 </div>
