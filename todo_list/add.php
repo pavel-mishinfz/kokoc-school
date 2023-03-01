@@ -95,7 +95,7 @@ if (!$link) {
         }
         else {
             // Защита от SQL-инъекции с помощью подготовленного выражения
-            $sql = "INSERT INTO tasks (name, dt_add, status_ext, project_id, dt_deadline, user_id, file_path) VALUES (?, NOW(), 0, ?, ?, '$cur_user_id', ?)";
+            $sql = "INSERT INTO tasks (name, dt_add, status_ext, project_id, dt_deadline, user_id, file_path) VALUES (?, NOW(), 0, ?, ?, '$user_id', ?)";
             $stmt = db_get_prepare_stmt($link, $sql, $form_task);
             $result = mysqli_stmt_execute($stmt);
 
