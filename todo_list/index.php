@@ -1,7 +1,7 @@
 <?php
 session_start();
 // показывать или нет выполненные задачи
-$show_complete_tasks = rand(0, 1);
+$show_complete_tasks = 1;
 
 require "helpers.php";
 $link = mysqli_connect("localhost","root", "","todo_list");
@@ -26,7 +26,7 @@ else {
         }
 
         // SQL-запрос для получения списка из всех задач у текущего пользователя
-        $sql = "SELECT t.name, t.dt_deadline, t.status_ext, t.project_id, t.file_path FROM tasks t JOIN users u ON t.user_id = u.id WHERE u.id = '$user_id'";
+        $sql = "SELECT t.id, t.name, t.dt_deadline, t.status_ext, t.project_id, t.file_path FROM tasks t JOIN users u ON t.user_id = u.id WHERE u.id = '$user_id'";
         $result = mysqli_query($link, $sql);
         if(!$result) {
             $error = mysqli_error($link);
@@ -88,12 +88,78 @@ else {
         // Поиск задач
         $search = $_GET['q'] ?? '';
         if($search) {
-            $sql = "SELECT name, dt_deadline, status_ext, project_id, file_path FROM tasks WHERE MATCH(name) AGAINST(?) and user_id = '$user_id'";
+            $sql = "SELECT id, name, dt_deadline, status_ext, project_id, file_path FROM tasks WHERE MATCH(name) AGAINST(?) and user_id = '$user_id'";
             
             $stmt = db_get_prepare_stmt($link, $sql, [$search]);
             mysqli_stmt_execute($stmt);
             $result = mysqli_stmt_get_result($stmt);
             if($result) {
+                $tasks_list_search = mysqli_fetch_all($result, MYSQLI_ASSOC);
+                $tasks_list_for_project = $tasks_list_search;
+            }
+        }
+
+        // Пометить задачу, как выполненную
+        $task_id = $_POST['task_id'] ?? '';
+        if($task_id) {
+            // Получение статуса задачи по id
+            $sql = "SELECT status_ext FROM tasks WHERE id = ?";
+
+            $stmt = db_get_prepare_stmt($link, $sql, [$task_id]);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+
+            if($result) { // если задача с таким id найдена
+                // Получаем значение поля status_ext
+                $task_status = mysqli_fetch_assoc($result);
+                if($task_status['status_ext']) {
+                    $status = 0;
+                }
+                else {
+                    $status = 1;
+                }
+                // Обновляем данные в БД
+                $sql = "UPDATE tasks SET status_ext = '$status' WHERE id = '$task_id'";
+
+                $result = mysqli_query($link, $sql);
+                if(!$result) {
+                    $error = mysqli_error($link);
+                    print("Ошибка SQL-запроса на чтение: " . $error);
+                }
+                else {
+                    header("Location: index.php");
+                }
+            }
+        }
+
+        // Показать выполненные задачи
+        if(isset($_POST['show_comleted'])) {
+            $show_complete_tasks = $_POST['show_comleted'];
+        }
+
+        // Пагинация по задачам
+        $tasks_switch = $_GET['switch'] ?? '';
+        if($tasks_switch) {
+            switch($tasks_switch) {
+                case 1: 
+                    $sql = "SELECT id, name, dt_deadline, status_ext, project_id, file_path FROM tasks WHERE user_id = '$user_id' and dt_deadline = CURDATE()";
+                    break;
+                case 2: 
+                    $sql = "SELECT id, name, dt_deadline, status_ext, project_id, file_path FROM tasks WHERE user_id = '$user_id' and dt_deadline = DATE_ADD(CURDATE(), INTERVAL 1 DAY)";
+                    break;
+                case 3: 
+                    $sql = "SELECT id, name, dt_deadline, status_ext, project_id, file_path FROM tasks WHERE user_id = '$user_id' and dt_deadline < CURDATE() and status_ext = 0";
+                    break;
+                default:
+                    break;
+            }
+
+            $result = mysqli_query($link, $sql);
+            if(!$result) {
+                $error = mysqli_error($link);
+                print("Ошибка SQL-запроса на чтение: " . $error);
+            }
+            else {
                 $tasks_list_for_project = mysqli_fetch_all($result, MYSQLI_ASSOC);
             }
         }
