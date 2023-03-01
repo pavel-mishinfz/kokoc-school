@@ -88,6 +88,7 @@ else {
         // Поиск задач
         $search = $_GET['q'] ?? '';
         if($search) {
+            $search = trim($search);
             $sql = "SELECT id, name, dt_deadline, status_ext, project_id, file_path FROM tasks WHERE MATCH(name) AGAINST(?) and user_id = '$user_id'";
             
             $stmt = db_get_prepare_stmt($link, $sql, [$search]);
