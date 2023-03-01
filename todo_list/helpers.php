@@ -219,3 +219,17 @@ function validateEmail($name) {
     }
     return null;
 }
+
+// Функция валидации формы добавления проекта
+function validateProject($name, $allowed_list) {
+    $category = mb_strtolower($_POST[$name]);
+    
+    foreach($allowed_list as $item) {
+        $item = mb_strtolower($item);
+        if($category == $item) {
+            return "Проект с таким названием уже создан";
+        }
+    }
+
+    return null;   
+}
