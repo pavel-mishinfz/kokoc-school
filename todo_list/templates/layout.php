@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
-<?php $classname = (empty($_SESSION['user']) && $_SERVER['PHP_SELF'] == '/php_p.mishin/lesson_08/index.php') ? "body-background" : "" ?>
+<?php $classname = (empty($_SESSION['user']) && $_SERVER['PHP_SELF'] == '/kokoc-school/todo_list/index.php') ? "body-background" : "" ?>
 <body class="<?= $classname; ?>">
     <h1 class="visually-hidden">Дела в порядке</h1>
 
@@ -17,7 +17,7 @@
         <div class="container <?= $classname; ?>">
             <?php if (isset($_SESSION['user'])) : ?>
                 <header class="main-header">
-                    <a href="/">
+                    <a href="index.php">
                         <img src="img/logo.png" width="153" height="42" alt="Логотип Дела в порядке">
                     </a>
 
@@ -35,7 +35,7 @@
                 </header>
             <?php else : ?>
                 <header class="main-header">
-                    <a href="#">
+                    <a href="index.php">
                         <img src="img/logo.png" width="153" height="42" alt="Логитип Дела в порядке">
                     </a>
                     <div class="main-header__side">
