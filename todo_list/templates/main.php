@@ -81,7 +81,7 @@
                                 </label>
                             </form>
                         </td>
-                        <td class="task__file"><a href="../uploads/?= esc($task['file_path']); ?>"><?= esc($task['file_path']); ?></a></td>
+                        <td class="task__file"><a href="http://localhost/kokoc-school/todo_list/uploads/<?= esc($task['file_path']); ?>"><?= esc($task['file_path']); ?></a></td>
                         <?php if (esc($task["dt_deadline"]) == null) : ?>
                         <td class="task__date">Нет</td>
                         <?php else : ?>
@@ -120,7 +120,7 @@
                             </label>
                         </form>
                     </td>
-                    <td class="task__file"><a href="../uploads/<?= esc($task['file_path']); ?>"><?= esc($task['file_path']); ?></a></td>
+                    <td class="task__file"><a href="http://localhost/kokoc-school/todo_list/uploads/<?= esc($task['file_path']); ?>"><?= esc($task['file_path']); ?></a></td>
                     <?php if (esc($task["dt_deadline"]) == null) : ?>
                     <td class="task__date">Нет</td>
                     <?php else : ?>
