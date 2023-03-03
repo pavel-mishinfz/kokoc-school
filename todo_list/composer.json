@@ -1,0 +1,17 @@
+{
+    "name": "pavel/todo_list",
+    "autoload": {
+        "psr-4": {
+            "Pavel\\todo_list\\": ""
+        }
+    },
+    "authors": [
+        {
+            "name": "pavel",
+            "email": "pavel.mishinfz@gmail.com"
+        }
+    ],
+    "require": {
+        "swiftmailer/swiftmailer": "^6.3"
+    }
+}
