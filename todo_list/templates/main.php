@@ -5,7 +5,7 @@
         <nav class="main-navigation">
             <ul class="main-navigation__list">
                 <?php foreach ($categories as $category) : ?>
-                    <?php $classname = ($category['id'] == $_GET['project_id']) ? "main-navigation__list-item--active" : "" ?>
+                    <?php $classname = (isset($_GET['project_id']) && $category['id'] == $_GET['project_id']) ? "main-navigation__list-item--active" : "" ?>
                     <li class="main-navigation__list-item <?= $classname ?>">
                         <a class="main-navigation__list-item-link" href="index.php?project_id=<?= $category["id"] ?>"><?= $category["name"] ?></a>
                         <span class="main-navigation__list-item-count"><?= funTaskCount($tasks_list, $category["id"]) ?></span>
@@ -58,14 +58,13 @@
                         <?php elseif ($task["status_ext"] == true) : ?>
                         <tr class="tasks__item task task--completed">
                         <?php else : ?>
-                            <?php $classname = funTaskDeadline($task) ? "task--important" : "" ?>
-                            <tr class="tasks__item task <?=$classname;?>">
+                            <tr class="tasks__item task <?=(funTaskDeadline($task) ? "task--important" : "")?>">
                         <?php endif; ?>
                         <td class="task__select">
                             <form action="index.php" method="post">
                                 <label class="checkbox task__checkbox">
                                     <input class="checkbox__input visually-hidden" name="task_id" value="<?= $task['id'] ?>" type="submit">
-                                    <input class="checkbox__input visually-hidden" type="checkbox" checked <?=($task["status_ext"] ? 'checked' : '')?>>
+                                    <input class="checkbox__input visually-hidden" type="checkbox" <?=($task["status_ext"] ? 'checked' : '')?>>
                                     <span class="checkbox__text"><?= esc($task["name"]); ?></span>
                                 </label>
                             </form>
@@ -90,8 +89,7 @@
                     <?php elseif ($task["status_ext"]) : ?>
                     <tr class="tasks__item task task--completed">
                     <?php else : ?>
-                        <?php $classname = funTaskDeadline($task) ? "task--important" : "" ?>
-                        <tr class="tasks__item task <?$classname;?>">
+                        <tr class="tasks__item task <?=(funTaskDeadline($task) ? "task--important" : "")?>">
                     <?php endif; ?>
                     <td class="task__select">
                         <form action="index.php" method="post">

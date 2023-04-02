@@ -1,77 +1,70 @@
 <?php
 session_start();
-require "helpers.php";
-// Подключение к БД
-$link = mysqli_connect("localhost", "root", "", "todo_list");
-if (!$link) {
-    print("Ошибка: Невозможно подключиться к MySQL " . mysqli_connect_error());
-} 
-else {
-    // print("Соединение установлено успешно!");
-    mysqli_set_charset($link, "utf8");
+require_once "helpers.php";
+require_once "config.php";
 
-    if($_SERVER['REQUEST_METHOD'] == 'POST') { // если для доступа к файлу был произведен метод POST
-        $auth = $_POST;
+if($_SERVER['REQUEST_METHOD'] == 'POST') { // если для доступа к файлу был произведен метод POST
+    $auth = $_POST;
 
-        $required = ['email', 'password']; // обязательные для заполнения поля
-        $errors = []; // массив с ошибками
+    $required = ['email', 'password']; // обязательные для заполнения поля
+    $errors = []; // массив с ошибками
 
-        // Правила валидации для каждого поля
-        $rules = [
-            'email' => function() {
-                return validateEmail('email');
-            },
-            'password' => function() {
-                return validateFilled('password');
-            }
-        ];
-
-        // Валидация всех полей
-        foreach($_POST as $key => $value) {
-            if(isset($rules[$key])) {
-                $rule = $rules[$key];
-                $errors[$key] = $rule();
-            }
+    // Правила валидации для каждого поля
+    $rules = [
+        'email' => function() {
+            return validateEmail('email');
+        },
+        'password' => function() {
+            return validateFilled('password');
         }
+    ];
 
-        $errors = array_filter($errors);
-
-        // Для каждого обязательного поля проверка на заполненность
-        foreach($required as $key) {
-            if(empty($_POST[$key])) {
-                $errors[$key] = 'Это поле надо заполнить';
-            }
+    // Валидация всех полей
+    foreach($_POST as $key => $value) {
+        if(isset($rules[$key])) {
+            $rule = $rules[$key];
+            $errors[$key] = $rule();
         }
+    }
 
-        $user_email = mysqli_real_escape_string($link, $auth['email']);
-        $sql = "SELECT * FROM users WHERE email = '$user_email'";
-        $result = mysqli_query($link, $sql);
+    $errors = array_filter($errors);
 
-        $user = $result ? mysqli_fetch_array($result, MYSQLI_ASSOC) : null;
+    // Для каждого обязательного поля проверка на заполненность
+    foreach($required as $key) {
+        if(empty($_POST[$key])) {
+            $errors[$key] = 'Это поле надо заполнить';
+        }
+    }
 
-        if(!count($errors) && $user) { // если все поля заполнены верно и пользователь найден в БД, то проверяем пароль
-            if(password_verify($auth['password'], $user['password'])) {
-                $_SESSION['user'] = $user['id'];
-            }
-            else {
-                $errors['err'] = "Вы ввели неверный email/пароль";
-            }
+    $user_email = mysqli_real_escape_string($link, $auth['email']);
+    $sql = "SELECT * FROM users WHERE email = '$user_email'";
+    $result = mysqli_query($link, $sql);
+
+    $user = $result ? mysqli_fetch_array($result, MYSQLI_ASSOC) : null;
+
+    if(!count($errors) && $user) { // если все поля заполнены верно и пользователь найден в БД, то проверяем пароль
+        if(password_verify($auth['password'], $user['password'])) {
+            $_SESSION['user'] = $user['id'];
         }
         else {
             $errors['err'] = "Вы ввели неверный email/пароль";
         }
-
-        if(count($errors)) {
-            $page_content = include_template("auth.php", ['errors' => $errors]);
-        }
-        else {
-            header("Location: index.php");
-            exit();
-        }
     }
     else {
-        $page_content = include_template("auth.php", []);
+        $errors['err'] = "Вы ввели неверный email/пароль";
+    }
+
+    if(count($errors)) {
+        $page_content = include_template("auth.php", ['errors' => $errors]);
+    }
+    else {
+        header("Location: index.php");
+        exit();
     }
 }
+else {
+    $page_content = include_template("auth.php", []);
+}
+
 $layout_content = include_template("layout.php", ['page_title' => "Дела в порядке", 'page_content' => $page_content]);
 print($layout_content);

@@ -177,7 +177,9 @@ function funTaskDeadline($task) {
 
 // Функция сохранения данных из формы
 function getPostVal($name) {
-    return $_POST[$name];
+    if(isset($_POST[$name])) {
+        return $_POST[$name];
+    }
 }
 
 // Функции для валидации полей формы добавления задачи

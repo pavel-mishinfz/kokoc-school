@@ -24,7 +24,7 @@
                 <label class="form__label" for="project_name">Название <sup>*</sup></label>
                 <?php $classname = isset($errors['name']) ? "form__input--error" : "";?>
                 <input class="form__input <?=$classname;?>" type="text" name="name" id="project_name" value="<?=esc(getPostVal('name'))?>" placeholder="Введите название проекта">
-                <p class="form__message"><?=$errors['name'];?></p>
+                <p class="form__message"><?=(isset($errors['name']) ? $errors['name'] : '');?></p>
             </div>
 
             <div class="form__row form__row--controls">

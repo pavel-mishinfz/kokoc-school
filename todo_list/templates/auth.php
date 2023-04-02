@@ -14,14 +14,14 @@
                 <label class="form__label" for="email">E-mail <sup>*</sup></label>
                 <?php $classname = isset($errors['email']) ? "form__input--error" : ""; ?>
                 <input class="form__input <?= $classname; ?>" type="text" name="email" id="email" value="<?= esc(getPostVal('email')); ?>" placeholder="Введите e-mail">
-                <p class="form__message"><?= $errors['email']; ?></p>
+                <p class="form__message"><?= (isset($errors['email']) ? $errors['email'] : ''); ?></p>
             </div>
 
             <div class="form__row">
                 <label class="form__label" for="password">Пароль <sup>*</sup></label>
                 <?php $classname = isset($errors['password']) ? "form__input--error" : ""; ?>
                 <input class="form__input <?= $classname; ?>" type="password" name="password" id="password" value="<?= esc(getPostVal('password')); ?>" placeholder="Введите пароль">
-                <p class="form__message"><?= $errors['password']; ?></p>
+                <p class="form__message"><?= (isset($errors['password']) ? $errors['password'] : ''); ?></p>
             </div>
 
             <div class="form__row form__row--controls">
