@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
-<?php $classname = (empty($_SESSION['user']) && $_SERVER['PHP_SELF'] == '/kokoc-school/todo_list/index.php') ? "body-background" : "" ?>
+<?php $classname = (empty($_SESSION['user']) && $_SERVER['PHP_SELF'] == '/kokoc-school/kokoc-school/todo_list/index.php') ? "body-background" : "" ?>
 <body class="<?= $classname; ?>">
     <h1 class="visually-hidden">Дела в порядке</h1>
 

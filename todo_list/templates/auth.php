@@ -26,11 +26,8 @@
 
             <div class="form__row form__row--controls">
                 <?php if (!empty($errors)) : ?>
-                    <?php if (count($errors) == 1) : ?>
-                        <p class="error-message"><?=$errors['err'];?></p>
-                    <?php else: ?>    
-                        <p class="error-message">Пожалуйста, исправьте ошибки в форме</p>
-                    <?php endif; ?>
+                    <?php $textError = count($errors) == 1 ? $errors['err'] : "Пожалуйста, исправьте ошибки в форме" ?>
+                    <p class="error-message"><?=$textError;?></p>
                 <?php endif; ?>
                 <input class="button" type="submit" name="" value="Войти">
             </div>

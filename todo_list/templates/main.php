@@ -5,11 +5,7 @@
         <nav class="main-navigation">
             <ul class="main-navigation__list">
                 <?php foreach ($categories as $category) : ?>
-                    <?php if ($category['id'] == $_GET['project_id']) : ?>
-                        <?php $classname = "main-navigation__list-item--active"; ?>
-                    <?php else : ?>
-                        <?php $classname = ""; ?>
-                    <? endif; ?>
+                    <?php $classname = ($category['id'] == $_GET['project_id']) ? "main-navigation__list-item--active" : "" ?>
                     <li class="main-navigation__list-item <?= $classname ?>">
                         <a class="main-navigation__list-item-link" href="index.php?project_id=<?= $category["id"] ?>"><?= $category["name"] ?></a>
                         <span class="main-navigation__list-item-count"><?= funTaskCount($tasks_list, $category["id"]) ?></span>
@@ -33,10 +29,10 @@
         <div class="tasks-controls">
             <nav class="tasks-switch">
                 <?php $classname = "tasks-switch__item--active"; ?>
-                <a href="index.php" class="tasks-switch__item <?php if (empty($_GET['switch'])) : ?> <?= $classname; ?> <?php endif; ?>">Все задачи</a>
-                <a href="index.php?switch=1" class="tasks-switch__item <?php if ($_GET['switch'] == 1) : ?> <?= $classname; ?> <?php endif; ?>">Повестка дня</a>
-                <a href="index.php?switch=2" class="tasks-switch__item <?php if ($_GET['switch'] == 2) : ?> <?= $classname; ?> <?php endif; ?>">Завтра</a>
-                <a href="index.php?switch=3" class="tasks-switch__item <?php if ($_GET['switch'] == 3) : ?> <?= $classname; ?> <?php endif; ?>">Просроченные</a>
+                <a href="index.php" class="tasks-switch__item <?= empty($_GET['switch']) ? $classname : '' ?>">Все задачи</a>
+                <a href="index.php?switch=1" class="tasks-switch__item <?= $_GET['switch'] == 1 ? $classname : '' ?>">Повестка дня</a>
+                <a href="index.php?switch=2" class="tasks-switch__item <?= $_GET['switch'] == 2 ? $classname : '' ?>">Завтра</a>
+                <a href="index.php?switch=3" class="tasks-switch__item <?= $_GET['switch'] == 3 ? $classname : '' ?>">Просроченные</a>
             </nav>
 
             <?php $param = $_SERVER['QUERY_STRING'] ? ("?" . $_SERVER['QUERY_STRING']) : ""; ?>
@@ -62,21 +58,14 @@
                         <?php elseif ($task["status_ext"] == true) : ?>
                         <tr class="tasks__item task task--completed">
                         <?php else : ?>
-                            <?php if (funTaskDeadline($task)) : ?>
-                            <tr class="tasks__item task task--important">
-                            <?php else : ?>
-                            <tr class="tasks__item task">
-                            <?php endif; ?>
+                            <?php $classname = funTaskDeadline($task) ? "task--important" : "" ?>
+                            <tr class="tasks__item task <?=$classname;?>">
                         <?php endif; ?>
                         <td class="task__select">
                             <form action="index.php" method="post">
                                 <label class="checkbox task__checkbox">
-                                    <?php if ($task["status_ext"] == true) : ?>
-                                        <input class="checkbox__input visually-hidden" name="task_id" value="<?= $task['id'] ?>" type="submit">
-                                        <input class="checkbox__input visually-hidden" type="checkbox" checked>
-                                    <?php else : ?>
-                                        <input class="checkbox__input visually-hidden" name="task_id" value="<?= $task['id'] ?>" type="submit">
-                                    <?php endif; ?>
+                                    <input class="checkbox__input visually-hidden" name="task_id" value="<?= $task['id'] ?>" type="submit">
+                                    <input class="checkbox__input visually-hidden" type="checkbox" checked <?=($task["status_ext"] ? 'checked' : '')?>>
                                     <span class="checkbox__text"><?= esc($task["name"]); ?></span>
                                 </label>
                             </form>
@@ -97,25 +86,18 @@
         <?php else : ?>
             <table class="tasks">
                 <?php foreach ($tasks_list_for_project as $task) : ?>
-                    <?php if ($task["status_ext"] == true && $show_complete_tasks == 0) : continue; ?>
-                    <?php elseif ($task["status_ext"] == true) : ?>
+                    <?php if ($task["status_ext"] && $show_complete_tasks == 0) : continue; ?>
+                    <?php elseif ($task["status_ext"]) : ?>
                     <tr class="tasks__item task task--completed">
                     <?php else : ?>
-                        <?php if (funTaskDeadline($task)) : ?>
-                        <tr class="tasks__item task task--important">
-                        <?php else : ?>
-                        <tr class="tasks__item task">
-                        <?php endif; ?>
+                        <?php $classname = funTaskDeadline($task) ? "task--important" : "" ?>
+                        <tr class="tasks__item task <?$classname;?>">
                     <?php endif; ?>
                     <td class="task__select">
                         <form action="index.php" method="post">
                             <label class="checkbox task__checkbox">
-                                <?php if ($task["status_ext"] == true) : ?>
-                                    <input class="checkbox__input visually-hidden" name="task_id" value="<?= $task['id'] ?>" type="submit">
-                                    <input class="checkbox__input visually-hidden" type="checkbox" checked>
-                                <?php else : ?>
-                                    <input class="checkbox__input visually-hidden" name="task_id" value="<?= $task['id'] ?>" type="submit">
-                                <?php endif; ?>
+                                <input class="checkbox__input visually-hidden" name="task_id" value="<?= $task['id'] ?>" type="submit">
+                                <input class="checkbox__input visually-hidden" type="checkbox" <?=($task["status_ext"] == true ? 'checked' : '')?>>
                                 <span class="checkbox__text"><?= esc($task["name"]); ?></span>
                             </label>
                         </form>
