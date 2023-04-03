@@ -1,11 +1,14 @@
 <?php
+session_start();
 
 require_once "helpers.php";
 require_once "config.php";
 
 $errors = []; // массив с ошибками
 if($_SERVER['REQUEST_METHOD'] == 'POST') { // если для доступа к файлу был произведен метод POST
-    $register = $_POST;
+    foreach($_POST as $key => $value) {
+        $register[$key] = esc($value);
+    }
 
     $required = ['email', 'password', 'name']; // обязательные для заполнения поля
 
@@ -22,7 +25,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') { // если для доступа к 
         }
     ];
 
-    // Валидация всех полей
+    // Валидация всех полей (проверка корректности введенных данных)
     foreach($_POST as $key => $value) {
         if(isset($rules[$key])) {
             $rule = $rules[$key];
@@ -40,11 +43,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') { // если для доступа к 
     }
 
     if(empty($errors)) { // если все поля заполнены верно, то проверяем email на уникальность
-        $user_email = mysqli_real_escape_string($link, $register['email']);
-        $sql = "SELECT * FROM users WHERE email = '$user_email'";
-        $result = mysqli_query($link, $sql);
-        
-        if(mysqli_num_rows($result) > 0) {
+        // Защита от SQL-инъекции с помощью подготовленного выражения
+        $sql = "SELECT * FROM users WHERE email = ?";
+        $stmt = db_get_prepare_stmt($link, $sql, [$register['email']]);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        if(mysqli_num_rows($result)) {
             $errors['email'] = "Пользователь с данным email уже зарегистрирован";
         }
         else {
@@ -60,6 +65,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') { // если для доступа к 
             exit();
         }
     }
+}
+if(isset($_SESSION['user'])) {
+    header("Location: index.php");
+    exit();
 }
 
 $page_content = include_template("form-register.php", ['errors' => $errors]);

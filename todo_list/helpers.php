@@ -210,8 +210,7 @@ function validateDate($name) {
 
 // Функция защиты данных от XSS 
 function esc($str) {
-    $text = strip_tags($str);
-    return $text;
+    return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
 }
 
 // Функция для валидации email при регистрации
@@ -224,11 +223,10 @@ function validateEmail($name) {
 
 // Функция валидации формы добавления проекта
 function validateProject($name, $allowed_list) {
-    $category = mb_strtolower($_POST[$name]);
+    $category = mb_strtolower(esc($_POST[$name]));
     
     foreach($allowed_list as $item) {
-        $item = mb_strtolower($item);
-        if($category == $item) {
+        if($category == mb_strtolower($item)) {
             return "Проект с таким названием уже создан";
         }
     }

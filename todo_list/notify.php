@@ -12,16 +12,18 @@ if($res && mysqli_num_rows($res)) {
     foreach($users as $user) { // перебираем всех пользователей
         $user_id = $user['id'];
         // Находим пользоавтеля у которого есть задача на текущую дату
-        $sql = "SELECT name, dt_deadline FROM tasks WHERE user_id = '$user_id' and status_ext = 0 and dt_deadline = CURDATE()";
-
-        $res = mysqli_query($link, $sql);
+        $sql = "SELECT name, dt_deadline FROM tasks WHERE user_id = ? and status_ext = 0 and dt_deadline = CURDATE()";
+        $stmt = db_get_prepare_stmt($link, $sql, [$user_id]);
+        mysqli_stmt_execute($stmt);
+        $res = mysqli_stmt_get_result($stmt);
 
         if($res && mysqli_num_rows($res)) {
             $tasks_deadline = mysqli_fetch_all($res, MYSQLI_ASSOC);
             // Получаем данные пользователя
-            $sql = "SELECT name, email FROM users WHERE id = '$user_id'";
-
-            $res = mysqli_query($link, $sql);
+            $sql = "SELECT name, email FROM users WHERE id = ?";
+            $stmt = db_get_prepare_stmt($link, $sql, [$user_id]);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
 
             if($res && mysqli_num_rows($res)) {
                 $cnt = 0;

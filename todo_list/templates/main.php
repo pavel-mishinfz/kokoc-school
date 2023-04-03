@@ -50,66 +50,36 @@
             </form>
         </div>
 
-        <?php if (isset($_GET['q'])) : ?>
-            <?php if (count($tasks_list_for_project)) : ?>
-                <table class="tasks">
-                    <?php foreach ($tasks_list_for_project as $task) : ?>
-                        <?php if ($task["status_ext"] == true && $show_complete_tasks == 0) : continue; ?>
-                        <?php elseif ($task["status_ext"] == true) : ?>
-                        <tr class="tasks__item task task--completed">
-                        <?php else : ?>
-                            <tr class="tasks__item task <?=(funTaskDeadline($task) ? "task--important" : "")?>">
-                        <?php endif; ?>
-                        <td class="task__select">
-                            <form action="index.php" method="post">
-                                <label class="checkbox task__checkbox">
-                                    <input class="checkbox__input visually-hidden" name="task_id" value="<?= $task['id'] ?>" type="submit">
-                                    <input class="checkbox__input visually-hidden" type="checkbox" <?=($task["status_ext"] ? 'checked' : '')?>>
-                                    <span class="checkbox__text"><?= esc($task["name"]); ?></span>
-                                </label>
-                            </form>
-                        </td>
-                        <td class="task__file"><a href="http://localhost/kokoc-school/todo_list/uploads/<?= esc($task['file_path']); ?>"><?= esc($task['file_path']); ?></a></td>
-                        <?php if (esc($task["dt_deadline"]) == null) : ?>
-                        <td class="task__date">Нет</td>
-                        <?php else : ?>
-                        <td class="task__date"><?= date("d.m.y", strtotime(esc($task["dt_deadline"])))  ?></td>
-                        <?php endif; ?>
-                        <td class="task__controls"></td>
-                        </tr>
-                        <?php endforeach; ?>
-                </table>
-            <?php else : ?>
-                <?= 'Ничего не найдено по вашему запросу'; ?>
-            <?php endif; ?>
-        <?php else : ?>
+        <?php if (count($tasks_list_for_project) || empty($_GET['q'])) : ?>
             <table class="tasks">
                 <?php foreach ($tasks_list_for_project as $task) : ?>
-                    <?php if ($task["status_ext"] && $show_complete_tasks == 0) : continue; ?>
-                    <?php elseif ($task["status_ext"]) : ?>
-                    <tr class="tasks__item task task--completed">
+                    <?php if ($task["status_ext"] == true && $show_complete_tasks == 0) : continue; ?>
+                    <?php elseif ($task["status_ext"] == true) : ?>
+                        <tr class="tasks__item task task--completed">
                     <?php else : ?>
-                        <tr class="tasks__item task <?=(funTaskDeadline($task) ? "task--important" : "")?>">
+                        <tr class="tasks__item task <?= (funTaskDeadline($task) ? "task--important" : "") ?>">
                     <?php endif; ?>
                     <td class="task__select">
-                        <form action="index.php" method="post">
+                        <form action="index.php<?= $param; ?>" method="post">
                             <label class="checkbox task__checkbox">
                                 <input class="checkbox__input visually-hidden" name="task_id" value="<?= $task['id'] ?>" type="submit">
-                                <input class="checkbox__input visually-hidden" type="checkbox" <?=($task["status_ext"] == true ? 'checked' : '')?>>
-                                <span class="checkbox__text"><?= esc($task["name"]); ?></span>
+                                <input class="checkbox__input visually-hidden" type="checkbox" <?= ($task["status_ext"] ? 'checked' : '') ?>>
+                                <span class="checkbox__text"><?= $task["name"]; ?></span>
                             </label>
                         </form>
                     </td>
-                    <td class="task__file"><a href="http://localhost/kokoc-school/todo_list/uploads/<?= esc($task['file_path']); ?>"><?= esc($task['file_path']); ?></a></td>
-                    <?php if (esc($task["dt_deadline"]) == null) : ?>
-                    <td class="task__date">Нет</td>
+                    <td class="task__file"><a href="http://localhost/kokoc-school/kokoc-school/todo_list/uploads/<?= $task['file_path']; ?>"><?= $task['file_path']; ?></a></td>
+                    <?php if ($task["dt_deadline"] == null) : ?>
+                        <td class="task__date">Нет</td>
                     <?php else : ?>
-                    <td class="task__date"><?= date("d.m.y", strtotime(esc($task["dt_deadline"])))  ?></td>
+                        <td class="task__date"><?= date("d.m.y", strtotime($task["dt_deadline"]))  ?></td>
                     <?php endif; ?>
-                    <td class="task__controls"></td>
+                        <td class="task__controls"></td>
                     </tr>
-                    <?php endforeach; ?>
+                <?php endforeach; ?>
             </table>
+        <?php else : ?>
+            <?= 'Ничего не найдено по вашему запросу'; ?>
         <?php endif; ?>
     </main>
 </div>
